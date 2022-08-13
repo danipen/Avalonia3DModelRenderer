@@ -370,12 +370,12 @@ private float _yaw;
 
             if (e.KeyModifiers == KeyModifiers.Control)
             {
-                Roll = (float)e.GetPosition(this).X.Map(0, Bounds.Width, 0, 8);
+                Pitch = (float)e.GetPosition(this).X.Map(0, Bounds.Width, 0, 8);
                 return;
             }
 
             Yaw = (float)e.GetPosition(this).X.Map(0, Bounds.Width, 0, 8);
-            Pitch = (float)e.GetPosition(this).Y.Map(0, Bounds.Height, 0, 8);
+            Roll = (float)e.GetPosition(this).Y.Map(0, Bounds.Height, 0, 8);
         }
 
         protected unsafe override void OnOpenGlRender(GlInterface gl, int fb)
