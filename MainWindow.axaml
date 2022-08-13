@@ -8,7 +8,9 @@
     <DockPanel>
         <Button x:Name="mBrowseButton" DockPanel.Dock="Top">Browse...</Button>
         <Grid ColumnDefinitions="* Auto *">
-            <DockPanel x:Name="mOpenGlControlContainer" Grid.Column="0"/>
+            <DockPanel Grid.Column="0">
+                <Border BorderThickness="1" BorderBrush="Gray" CornerRadius="4" x:Name="mOpenGlControlContainer" Padding="0 0 1 1"/>
+            </DockPanel>
             <GridSplitter Grid.Column="1" />
             <TextBox x:Name="mContextTextBox" Grid.Column="2"/>
         </Grid>

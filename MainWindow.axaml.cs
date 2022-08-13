@@ -21,7 +21,7 @@ namespace Avalonia3DModelRenderer
 
             mOpenGlControl = new OpenGlControl();
 
-            mOpenGlControlContainer.Children.Add(mOpenGlControl);
+            mOpenGlControlContainer.Child = mOpenGlControl;
         }
 
         async void BrowseButton_Click(object? sender, RoutedEventArgs e)
@@ -97,7 +97,7 @@ namespace Avalonia3DModelRenderer
 
         protected override void OnOpenGlRender(GlInterface gl, int fb)
         {
-            gl.ClearColor(0.5f, 0.5f, 0.5f, 0.5f);
+            gl.ClearColor(0.9f, 0.9f, 0.9f, 1f);
             gl.Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             gl.Enable(GL_DEPTH_TEST);
             gl.Viewport(0, 0, (int)Bounds.Width, (int)Bounds.Height);
