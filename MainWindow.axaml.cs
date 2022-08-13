@@ -18,10 +18,6 @@ namespace Avalonia3DModelRenderer
             //mBrowseButton = this.FindControl<Button>("mBrowseButton");
             mBrowseButton.Click += BrowseButton_Click;
             //mContentTextBox = this.Find<TextBox>("mContentTextBox");
-
-            mOpenGlControl = new OpenGlControl();
-
-            mOpenGlControlContainer.Child = mOpenGlControl;
         }
 
         async void BrowseButton_Click(object? sender, RoutedEventArgs e)
@@ -68,7 +64,8 @@ namespace Avalonia3DModelRenderer
                 sb.AppendLine(rawScene.SceneFlags + " scene flags");
                 WriteMetadata(rawScene.Metadata, sb);
 
-                mOpenGlControl.SetScene(rawScene);
+                mOpenGlControl = new OpenGlControl(rawScene);
+                mOpenGlControlContainer.Child = mOpenGlControl;
 
                 mContextTextBox.Text = sb.ToString();
             }
@@ -90,7 +87,7 @@ namespace Avalonia3DModelRenderer
 
     public class OpenGlControl : Avalonia.OpenGL.Controls.OpenGlControlBase
     {
-        public void SetScene(Scene scene)
+        public OpenGlControl(Scene scene)
         {
             mScene = scene;
         }
@@ -98,6 +95,8 @@ namespace Avalonia3DModelRenderer
         protected override void OnOpenGlInit(GlInterface gl, int fb)
         {
             base.OnOpenGlInit(gl, fb);
+
+            RecursiveLoadScene(gl, mScene.RootNode, mScene.Meshes);
         }
 
         protected override void OnOpenGlDeinit(GlInterface gl, int fb)
@@ -111,14 +110,9 @@ namespace Avalonia3DModelRenderer
             gl.Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             gl.Enable(GL_DEPTH_TEST);
             gl.Viewport(0, 0, (int)Bounds.Width, (int)Bounds.Height);
-
-            if (mScene == null)
-                return;
-
-            //RecursiveRender(gl, mScene.RootNode, mScene.Meshes);
         }
 
-        unsafe void RecursiveRender(GlInterface gl, Node node, List<Mesh> meshes)
+        unsafe void RecursiveLoadScene(GlInterface gl, Node node, List<Mesh> meshes)
         {
             foreach (var mesh in meshes)
             {
@@ -141,13 +135,12 @@ namespace Avalonia3DModelRenderer
                     gl.BufferData(GL_ARRAY_BUFFER, (IntPtr)(byteCount), new IntPtr(pdata), GL_STATIC_DRAW);
                 }
 
-                gl.DrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, IntPtr.Zero);
                 gl.BindBuffer(GL_ARRAY_BUFFER, 0);
             }
 
             foreach (var child in node.Children)
             {
-                RecursiveRender(gl, child, meshes);
+                RecursiveLoadScene(gl, child, meshes);
             }
         }
 
