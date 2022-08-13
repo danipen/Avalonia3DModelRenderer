@@ -101,6 +101,44 @@ namespace Avalonia3DModelRenderer
             gl.Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             gl.Enable(GL_DEPTH_TEST);
             gl.Viewport(0, 0, (int)Bounds.Width, (int)Bounds.Height);
+
+            if (mScene == null)
+                return;
+
+            //RecursiveRender(gl, mScene.RootNode, mScene.Meshes);
+        }
+
+        unsafe void RecursiveRender(GlInterface gl, Node node, List<Mesh> meshes)
+        {
+            foreach (var mesh in meshes)
+            {
+                int glBufferId = gl.GenBuffer();
+                gl.BindBuffer(GL_ARRAY_BUFFER, glBufferId);
+
+                var byteCount = mesh.Vertices.Count * 12;
+                var temp = new float[byteCount];
+
+                var n = 0;
+                foreach(var v in mesh.Vertices)
+                {
+                    temp[n++] = v.X;
+                    temp[n++] = v.Y;
+                    temp[n++] = v.Z;
+                }   
+
+                fixed (void* pdata = temp)
+                {
+                    gl.BufferData(GL_ARRAY_BUFFER, (IntPtr)(byteCount), new IntPtr(pdata), GL_STATIC_DRAW);
+                }
+
+                gl.DrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, IntPtr.Zero);
+                gl.BindBuffer(GL_ARRAY_BUFFER, 0);
+            }
+
+            foreach (var child in node.Children)
+            {
+                RecursiveRender(gl, child, meshes);
+            }
         }
 
         Scene mScene;
