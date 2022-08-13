@@ -5,7 +5,7 @@ using System.Text;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.OpenGL;
-//using Avalonia.OpenGL;
+using static Avalonia.OpenGL.GlConsts;
 
 namespace Avalonia3DModelRenderer
 {
@@ -97,7 +97,10 @@ namespace Avalonia3DModelRenderer
 
         protected override void OnOpenGlRender(GlInterface gl, int fb)
         {
-            gl.ClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+            gl.ClearColor(0.5f, 0.5f, 0.5f, 0.5f);
+            gl.Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            gl.Enable(GL_DEPTH_TEST);
+            gl.Viewport(0, 0, (int)Bounds.Width, (int)Bounds.Height);
         }
 
         Scene mScene;
